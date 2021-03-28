@@ -9,23 +9,23 @@ interface SlideData<T> {
 
 export const createProgressSelector = (state$: Observable<State>) => state$.pipe(
     map(({ index, progress }): SlideData<number> => ({ index, value: progress / DELAY })),
-    distinctUntilChanged(),    
+    distinctUntilChanged(),
 );
 
 export const createCurrentIndexSelector = (state$: Observable<State>) => state$.pipe(
-    map(s => s.index),
+    map((s) => s.index),
     distinctUntilChanged(),
     mergeMapTo(EMPTY),
 );
 
 export const createThemeSelector = (state$: Observable<State>) => state$.pipe(
-    map(s => s.theme),
+    map((s) => s.theme),
     distinctUntilChanged(),
 );
 
 export const createCurrentDataSelector = (state$: Observable<State>) => state$.pipe(
     map(({ index, stories }): SlideData<Slide> => ({ index, value: stories[index] })),
     distinctUntilChanged(
-        (a, b) => a.index === b.index && a.value === b.value
-    )
+        (a, b) => a.index === b.index && a.value === b.value,
+    ),
 );

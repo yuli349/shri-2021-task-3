@@ -2,11 +2,11 @@ import { messageAction, XMessage } from './messages';
 import { setElementTheme } from './application/view';
 import './frame.css';
 
-interface ExtendedWindow extends Window { 
-    renderTemplate: (alias: string, data: object) => string 
+interface ExtendedWindow extends Window {
+    renderTemplate: (alias: string, data: object) => string
 }
 
-declare var window: ExtendedWindow;
+declare const window: ExtendedWindow;
 
 function ready() {
     window.postMessage('load', '*');
@@ -14,7 +14,7 @@ function ready() {
 
 function sendMessage(msg: XMessage) {
     window.postMessage(msg, '*');
-} 
+}
 
 function receiveMessage({ data }: MessageEvent<XMessage>) {
     if (data.type === 'message@UPDATE') {
@@ -26,13 +26,13 @@ function receiveMessage({ data }: MessageEvent<XMessage>) {
 
 function onDocumentClick(e: MouseEvent) {
     if (e.target instanceof HTMLElement) {
-        let target = e.target;
-        while(target && !target.dataset.action) {
+        let { target } = e;
+        while (target && !target.dataset.action) {
             target = target.parentElement;
         }
 
-            const { action, params } = target.dataset;
-            sendMessage(messageAction(action, params));
+        const { action, params } = target.dataset;
+        sendMessage(messageAction(action, params));
     }
 }
 

@@ -16,8 +16,7 @@ export interface State {
     pause: boolean;
 }
 
-const hasSymbol =
-    typeof Symbol !== 'undefined' && typeof Symbol('x') === 'symbol';
+const hasSymbol = typeof Symbol !== 'undefined' && typeof Symbol('x') === 'symbol';
 
 export const DRAFT_STATE: unique symbol = hasSymbol
     ? Symbol.for('state')

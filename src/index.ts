@@ -47,10 +47,6 @@ createCurrentIndexSelector(state$)
 
 createCurrentDataSelector(state$)
     .subscribe(({ index, value: { alias, data } }) => {
-        frames.forEach((iframe) => {
-            iframe.className = 'frame';
-        });
-        frames[index].classList.add('active');
         sendMessage(frames[index], messageUpdate(alias, data));
     });
 

@@ -1,24 +1,7 @@
 import produce, { Draft } from 'immer';
 
 import { Action } from './actions';
-import {
-    descriptors, DRAFT_STATE, errors, INTERVAL, State,
-} from './types';
-
-export function die(error: keyof typeof errors, ...args: any[]): never {
-    const e = errors[error];
-    const msg = !e
-        ? 'unknown error nr: ' + error
-        : typeof e === 'function'
-            // @ts-ignore
-            ? e.apply(null, args as any) : e;
-    throw new Error(`[function] ${msg}`);
-}
-
-function assertUnrevoked(state: any) {
-    // eslint-disable-next-line no-underscore-dangle
-    if (state.revoked_) die(1, JSON.stringify(state));
-}
+import { INTERVAL, State } from './types';
 
 export const observer = produce((state: Draft<State>, action: Action) => {
     switch (action.type) {
@@ -51,7 +34,7 @@ export const observer = produce((state: Draft<State>, action: Action) => {
             const { alias, data } = action.data;
 
             if (alias) {
-                state.stories[0].alias = alias;
+                state.stories[state.index].alias = alias;
             }
 
             if (data) {
@@ -67,32 +50,3 @@ export const observer = produce((state: Draft<State>, action: Action) => {
     }
     return state;
 });
-
-export function proxyProperty(
-    prop: string | number,
-    enumerable: boolean,
-): PropertyDescriptor {
-    let desc = descriptors[prop];
-    if (desc) {
-        desc.enumerable = enumerable;
-    } else {
-        // eslint-disable-next-line no-multi-assign
-        descriptors[prop] = desc = {
-            configurable: true,
-            enumerable,
-            get(this: any) {
-                const state = this[DRAFT_STATE];
-                assertUnrevoked(state);
-                // @ts-ignore
-                return objectTraps.get(state, prop);
-            },
-            set(this: any, value) {
-                const state = this[DRAFT_STATE];
-                assertUnrevoked(state);
-                // @ts-ignore
-                objectTraps.set(state, prop, value);
-            },
-        };
-    }
-    return desc;
-}
